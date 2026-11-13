@@ -29,6 +29,64 @@
   if (saved === 'en') apply('en');
   button.addEventListener('click', () => apply(root.lang === 'en' ? 'ar' : 'en'));
 
+  // Motion: skipped entirely when the visitor asks for reduced motion.
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // The header gains a shadow once the page scrolls.
+  const header = document.querySelector('.site-header');
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 10);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Things rise into view, one after another within the same group.
+  const groups = [
+    '.section .eyebrow', '.section h2', '.section .intro', '.split > div',
+    '.photo', '.card', '.chips span', '.steps li', '.contact-list li',
+    '.test-lists > div', '.ticks li', '.app-visual', '.stat-item',
+  ];
+  const targets = [...document.querySelectorAll(groups.join(','))];
+  if (!calm && 'IntersectionObserver' in window) {
+    targets.forEach((el) => {
+      const siblings = [...el.parentElement.children].filter((c) => targets.includes(c));
+      el.style.setProperty('--d', `${Math.min(siblings.indexOf(el), 6) * 0.08}s`);
+      el.classList.add('reveal');
+      if (el.matches('.photo, .app-visual')) el.classList.add('from-side');
+    });
+    const seen = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        seen.unobserve(e.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    targets.forEach((el) => seen.observe(el));
+  }
+
+  // The numbers count up when the strip comes into view.
+  const counters = [...document.querySelectorAll('.count[data-to]')];
+  const run = (el) => {
+    const to = Number(el.dataset.to);
+    const suffix = el.dataset.suffix || '';
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / 1400);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = `${Math.round(to * eased)}${suffix}`;
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  if (!calm && 'IntersectionObserver' in window) {
+    const watch = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        run(e.target);
+        watch.unobserve(e.target);
+      });
+    }, { threshold: 0.5 });
+    counters.forEach((el) => { el.textContent = `0${el.dataset.suffix || ''}`; watch.observe(el); });
+  }
+
   const menu = document.getElementById('menu');
   const nav = document.getElementById('nav');
   menu.addEventListener('click', () => {

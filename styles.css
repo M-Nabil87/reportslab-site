@@ -184,14 +184,20 @@ html[dir="ltr"] .service ul { padding: 0 22px 22px 42px; }
   transform: rotate(-45deg);
 }
 .small { font-size: 0.85rem; opacity: 0.8; margin-top: 16px; }
-.app-visual { position: relative; min-height: 460px; }
+/* Both pictures stay inside a box of fixed proportions, so nothing spills
+   into the next section at any width. */
+.app-visual { position: relative; aspect-ratio: 5 / 4.4; width: 100%; max-width: 560px; margin-inline: auto; }
 .app-visual .cats {
-  position: absolute; inset-inline-start: 0; top: 30px; width: 68%;
-  border-radius: 18px; box-shadow: var(--shadow); opacity: 0.95;
+  position: absolute; inset-inline-start: 0; top: 6%; width: 68%; height: 88%;
+  object-fit: cover; object-position: center top;
+  border-radius: 20px; box-shadow: var(--shadow);
 }
 .app-visual .phone {
-  position: absolute; inset-inline-end: 6%; top: 0; width: 46%; max-width: 260px;
-  border-radius: 28px; border: 6px solid var(--green-900); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  position: absolute; inset-inline-end: 4%; top: 0; height: 100%; width: auto; max-width: 46%;
+  object-fit: cover; object-position: top;
+  border-radius: 28px; border: 6px solid var(--green-900); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+  animation: float 6s ease-in-out infinite;
+  z-index: 2;
 }
 
 /* Contact */
@@ -223,7 +229,6 @@ html[dir="ltr"] .service ul { padding: 0 22px 22px 42px; }
   .cards.four { grid-template-columns: repeat(2, 1fr); }
   .cards.three, .test-lists { grid-template-columns: 1fr 1fr; }
   .split { grid-template-columns: 1fr; gap: 32px; }
-  .app-visual { min-height: 420px; }
 }
 @media (max-width: 860px) {
   .menu { display: block; }
@@ -245,11 +250,107 @@ html[dir="ltr"] .service ul { padding: 0 22px 22px 42px; }
   html[dir="ltr"] .hero-img { -webkit-mask-image: none; mask-image: none; }
   .hero-content { padding-block: 60px 48px; }
   .brand img { height: 38px; }
-  .app-visual { min-height: 380px; }
-  .app-visual .cats { width: 75%; }
-  .app-visual .phone { width: 48%; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .btn { transition: none; }
+}
+
+/* ===== Motion and graphics (D-056 follow-up) ===== */
+
+/* Grid pattern like the profile's cover and contact page. */
+.hero::before, .app::before, .site-footer::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+.app, .site-footer { position: relative; overflow: hidden; }
+.app > .wrap, .site-footer > .wrap { position: relative; }
+
+/* Hero: slow zoom on the photo, the title rises in, a bouncing hint. */
+.hero-img { animation: kenburns 18s ease-out both; }
+.hero-content > * { animation: rise 0.9s cubic-bezier(.2, .7, .2, 1) both; }
+.hero-content > *:nth-child(2) { animation-delay: 0.12s; }
+.hero-content > *:nth-child(3) { animation-delay: 0.24s; }
+.hero-content > *:nth-child(4) { animation-delay: 0.36s; }
+.hero-content > *:nth-child(5) { animation-delay: 0.48s; }
+.hero h1 { position: relative; display: inline-block; }
+.hero h1::after {
+  content: ""; position: absolute; inset-inline-start: 0; bottom: -6px; height: 5px; width: 40%;
+  background: var(--sand); border-radius: 4px; transform-origin: right;
+  animation: grow 1s 0.7s cubic-bezier(.2, .7, .2, 1) both;
+}
+html[dir="ltr"] .hero h1::after { transform-origin: left; }
+.scroll-hint {
+  position: absolute; bottom: 92px; inset-inline-start: 50%; transform: translateX(50%);
+  width: 26px; height: 42px; border: 2px solid rgba(255, 255, 255, 0.6); border-radius: 14px; z-index: 2;
+}
+html[dir="ltr"] .scroll-hint { transform: translateX(-50%); }
+.scroll-hint span {
+  position: absolute; top: 8px; left: 50%; width: 4px; height: 8px; margin-left: -2px;
+  background: var(--white); border-radius: 2px; animation: wheel 1.8s infinite;
+}
+.wave { position: absolute; bottom: -1px; left: 0; width: 100%; height: 70px; fill: var(--green-900); }
+
+/* Numbers strip. */
+.stats { background: var(--green-900); color: var(--white); padding: 18px 0 40px; }
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.stat-item { text-align: center; padding: 10px 6px; border-inline-start: 1px solid rgba(255, 255, 255, 0.12); }
+.stat-item:first-child { border-inline-start: 0; }
+.stat-item .count { display: block; font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 900; color: var(--sand); line-height: 1.1; direction: ltr; }
+.stat-item p { margin: 6px 0 0; color: rgba(255, 255, 255, 0.78); font-size: 0.95rem; }
+
+/* Header gains a shadow once the page scrolls. */
+.site-header { transition: box-shadow 0.25s ease, background 0.25s ease; }
+.site-header.scrolled { box-shadow: 0 6px 24px rgba(47, 56, 51, 0.12); background: rgba(247, 241, 230, 0.96); }
+
+/* Section titles get a short accent line. */
+.section h2 { position: relative; padding-bottom: 14px; }
+.section h2::after {
+  content: ""; position: absolute; bottom: 0; inset-inline-start: 0; width: 56px; height: 4px;
+  background: var(--green-300); border-radius: 4px;
+}
+.app h2::after { background: var(--sand); }
+
+/* Cards and photos respond to the pointer. */
+.card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+.service img, .photo-card img, .photo img { transition: transform 0.7s ease; }
+.service:hover img, .photo-card:hover img, .photo:hover img { transform: scale(1.06); }
+.service, .photo-card { isolation: isolate; }
+.chips span { transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease; }
+.chips span:hover { background: var(--green-700); color: var(--white); transform: translateY(-2px); }
+.btn { position: relative; overflow: hidden; }
+.btn::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg); transition: left 0.6s ease;
+}
+.btn:hover::after { left: 120%; }
+
+/* Things rise into view as the page scrolls (set by main.js). */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.2, .7, .2, 1); transition-delay: var(--d, 0s); }
+.reveal.in { opacity: 1; transform: none; }
+.reveal.from-side { transform: translateX(-32px); }
+html[dir="rtl"] .reveal.from-side { transform: translateX(32px); }
+.reveal.from-side.in { transform: none; }
+
+@keyframes kenburns { from { transform: scale(1.12); } to { transform: scale(1); } }
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes wheel { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(14px); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+@media (max-width: 860px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-item:nth-child(3) { border-inline-start: 0; }
+  .scroll-hint { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-img, .hero-content > *, .hero h1::after, .scroll-hint span, .app-visual .phone { animation: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .card, .card:hover, .service img, .photo img, .photo-card img, .btn::after { transition: none !important; transform: none !important; }
 }
