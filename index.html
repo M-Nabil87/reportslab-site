@@ -14,6 +14,28 @@
 <meta property="og:description" content="Soil investigation, geotechnical testing, quality control, and certified technical reports.">
 <meta property="og:image" content="assets/img/team.jpg">
 <link rel="stylesheet" href="styles.css">
+<!-- Analytics (D-057): every consent signal starts denied; main.js updates
+     analytics_storage only after the visitor agrees in the banner. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    analytics_storage: 'denied', ad_storage: 'denied',
+    ad_user_data: 'denied', ad_personalization: 'denied',
+    wait_for_update: 500
+  });
+  try {
+    if (localStorage.getItem('reports-consent') === 'granted') {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  } catch (_) {}
+</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PLSBZR5N');</script>
 </head>
 <body>
 
@@ -359,9 +381,18 @@
       <a href="https://m-nabil87.github.io/engineering-lab/privacy.html" data-en="Privacy policy">سياسة الخصوصية</a>
       <a href="https://m-nabil87.github.io/engineering-lab/" data-en="Delete account">حذف الحساب</a>
       <a class="admin-link" href="https://app.reportslab.si/#/admin" data-en="Admin panel">لوحة الأدمن</a>
+      <button type="button" class="link-button" id="consent-open" data-en="Privacy settings">إعدادات الخصوصية</button>
     </nav>
   </div>
 </footer>
+
+<div class="consent" id="consent" role="dialog" aria-live="polite" aria-labelledby="consent-text" hidden>
+  <p id="consent-text" data-en="We use Google Analytics to count visitors and see which pages are useful, with no advertising. Do you agree?">نستخدم Google Analytics لمعرفة عدد الزوار وأكثر الصفحات فائدة، بدون أي إعلانات. هل توافق؟</p>
+  <div class="consent-actions">
+    <button type="button" class="btn btn-ghost" id="consent-no" data-en="No thanks">لا، شكرًا</button>
+    <button type="button" class="btn btn-light" id="consent-yes" data-en="Accept">موافق</button>
+  </div>
+</div>
 
 <script src="main.js"></script>
 </body>

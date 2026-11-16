@@ -87,6 +87,23 @@
     counters.forEach((el) => { el.textContent = `0${el.dataset.suffix || ''}`; watch.observe(el); });
   }
 
+  // Analytics consent (D-057): asked once, changeable from the footer.
+  const consent = document.getElementById('consent');
+  const readConsent = () => {
+    try { return localStorage.getItem('reports-consent'); } catch (_) { return null; }
+  };
+  const answer = (granted) => {
+    try { localStorage.setItem('reports-consent', granted ? 'granted' : 'denied'); } catch (_) {}
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', { analytics_storage: granted ? 'granted' : 'denied' });
+    }
+    consent.hidden = true;
+  };
+  document.getElementById('consent-yes').addEventListener('click', () => answer(true));
+  document.getElementById('consent-no').addEventListener('click', () => answer(false));
+  document.getElementById('consent-open').addEventListener('click', () => { consent.hidden = false; });
+  if (!readConsent()) consent.hidden = false;
+
   const menu = document.getElementById('menu');
   const nav = document.getElementById('nav');
   menu.addEventListener('click', () => {
