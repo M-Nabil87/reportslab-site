@@ -94,8 +94,12 @@
   };
   const answer = (granted) => {
     try { localStorage.setItem('reports-consent', granted ? 'granted' : 'denied'); } catch (_) {}
-    if (typeof window.gtag === 'function') {
-      window.gtag('consent', 'update', { analytics_storage: granted ? 'granted' : 'denied' });
+    if (granted && typeof window.loadGtm === 'function') {
+      window.loadGtm();
+    } else if (!granted && typeof window.gtag === 'function') {
+      // Withdrawn: stop analytics storage for the rest of this visit; GTM
+      // is not loaded again on the next visit.
+      window.gtag('consent', 'update', { analytics_storage: 'denied' });
     }
     consent.hidden = true;
   };

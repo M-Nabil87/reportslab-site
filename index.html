@@ -14,28 +14,31 @@
 <meta property="og:description" content="Soil investigation, geotechnical testing, quality control, and certified technical reports.">
 <meta property="og:image" content="assets/img/team.jpg">
 <link rel="stylesheet" href="styles.css">
-<!-- Analytics (D-057): every consent signal starts denied; main.js updates
-     analytics_storage only after the visitor agrees in the banner. -->
+<!-- Analytics (D-057): Google Tag Manager loads only after the visitor
+     agrees in the banner (or agreed before), so nothing reaches Google
+     until then. Every consent signal starts denied; only analytics_storage
+     is ever granted. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('consent', 'default', {
     analytics_storage: 'denied', ad_storage: 'denied',
-    ad_user_data: 'denied', ad_personalization: 'denied',
-    wait_for_update: 500
+    ad_user_data: 'denied', ad_personalization: 'denied'
   });
+  window.loadGtm = function () {
+    if (window.gtmLoaded) return;
+    window.gtmLoaded = true;
+    gtag('consent', 'update', { analytics_storage: 'granted' });
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PLSBZR5N');
+  };
   try {
-    if (localStorage.getItem('reports-consent') === 'granted') {
-      gtag('consent', 'update', { analytics_storage: 'granted' });
-    }
+    if (localStorage.getItem('reports-consent') === 'granted') window.loadGtm();
   } catch (_) {}
 </script>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PLSBZR5N');</script>
 </head>
 <body>
 
