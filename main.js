@@ -4,12 +4,16 @@
   const button = document.getElementById('lang');
   const nodes = [...document.querySelectorAll('[data-en]')];
   const alts = [...document.querySelectorAll('[data-en-alt]')];
+  const holders = [...document.querySelectorAll('[data-en-placeholder]')];
+  const labels = [...document.querySelectorAll('[data-en-label]')];
   // Keep the Arabic as written in the page.
   nodes.forEach((n) => { n.dataset.ar = n.innerHTML; });
   alts.forEach((n) => { n.dataset.arAlt = n.getAttribute('alt') || ''; });
+  holders.forEach((n) => { n.dataset.arPlaceholder = n.getAttribute('placeholder') || ''; });
+  labels.forEach((n) => { n.dataset.arLabel = n.getAttribute('aria-label') || ''; });
   const titles = {
     ar: document.title,
-    en: 'Reports for Engineering Consultancy | Quality you can trust',
+    en: root.dataset.titleEn || 'Reports for Engineering Consultancy | Quality you can trust',
   };
 
   function apply(lang) {
@@ -18,6 +22,8 @@
     root.dir = en ? 'ltr' : 'rtl';
     nodes.forEach((n) => { n.innerHTML = en ? n.dataset.en : n.dataset.ar; });
     alts.forEach((n) => n.setAttribute('alt', en ? n.dataset.enAlt : n.dataset.arAlt));
+    holders.forEach((n) => n.setAttribute('placeholder', en ? n.dataset.enPlaceholder : n.dataset.arPlaceholder));
+    labels.forEach((n) => n.setAttribute('aria-label', en ? n.dataset.enLabel : n.dataset.arLabel));
     button.textContent = en ? 'عربي' : 'EN';
     button.setAttribute('aria-label', en ? 'العربية' : 'English');
     document.title = en ? titles.en : titles.ar;
